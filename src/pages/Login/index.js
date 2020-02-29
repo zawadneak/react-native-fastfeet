@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 
-import { StatusBar } from 'react-native';
+import { StatusBar, Alert } from 'react-native';
+import { useDispatch } from 'react-redux';
 
+import { userSignIn } from '~/store/modules/user/actions';
 import { Container, Logo, Input } from './styles';
 import Button from '~/components/Button/index';
 import logo from '~/assets/img/logo.png';
@@ -11,11 +13,23 @@ export default function LogIn() {
   const [registrationID, setID] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const dispatch = useDispatch();
+
   const handleLogin = async () => {
     setLoading(true);
-    const response = await api.get(`provider/${registrationID}`);
 
-    alert(response.data.name);
+    if (!registrationID) {
+      setLoading(false);
+      return Alert.alert('Fastfeet', 'Please input your registration ID!');
+    }
+
+    try {
+      const response = await api.get(`provider/${registrationID}`);
+
+      dispatch(userSignIn(response.data));
+    } catch (err) {
+      Alert.alert('Fastfeet', 'Error loggin in the system!');
+    }
 
     setLoading(false);
   };

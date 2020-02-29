@@ -1,7 +1,7 @@
 import { produce } from 'immer';
 
 const INITIAL_STATE = {
-  user: [],
+  data: [],
   signed: false,
 };
 
@@ -9,12 +9,12 @@ export default function user(state = INITIAL_STATE, action) {
   return produce(state, draft => {
     switch (action.type) {
       case '@user/SIGN_IN': {
-        draft.user = action.payload.user;
-        draft.signed = false;
+        draft.data = action.payload.user;
+        draft.signed = true;
         break;
       }
       case '@user/SIGN_OUT': {
-        draft.user = [];
+        draft.data = [];
         draft.signed = true;
         break;
       }

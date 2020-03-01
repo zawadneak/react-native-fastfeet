@@ -179,6 +179,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-vector-icons')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
@@ -198,8 +199,8 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 project.ext.vectoricons = [
-    iconFontNames: [ 'MaterialIcons.ttf' ] // Name of the font files you want to copy
-]
+    iconFontNames: [ 'MaterialIcons.ttf' ,'FontAwesome5.ttf']
+    ]
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 

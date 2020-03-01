@@ -15,7 +15,7 @@ export default function user(state = INITIAL_STATE, action) {
       }
       case '@user/SIGN_OUT': {
         draft.data = [];
-        draft.signed = true;
+        draft.signed = false;
         break;
       }
       default:

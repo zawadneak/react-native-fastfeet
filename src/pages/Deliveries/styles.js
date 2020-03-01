@@ -83,3 +83,5 @@ export const ButtonTitle = styled.Text`
   text-decoration-line: ${props => (props.active ? 'underline' : 'none')};
   font-weight: bold;
 `;
+
+export const List = styled.FlatList``;

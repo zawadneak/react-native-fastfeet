@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { StatusBar } from 'react-native';
+import { StatusBar, Alert } from 'react-native';
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { userSignOut } from '~/store/modules/user/actions';
+import getDeliveries from '~/store/modules/deliveries/actions';
+import ListView from '~/components/ListView/index';
 
 import {
   Container,
@@ -20,11 +23,11 @@ import {
   ButtonHolder,
   Buttons,
   ButtonTitle,
+  List,
 } from './styles';
+import api from '~/services/api';
 
 export default function Deliveries({ navigation }) {
-  const [active, setActive] = useState(true);
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
       tabBarIcon: ({ color, size }) => (
@@ -34,11 +37,43 @@ export default function Deliveries({ navigation }) {
   }, [navigation]);
 
   const user = useSelector(state => state.user.data);
-  const [first, last] = user.name.split(' ');
-
-  const nullImageString = useMemo(() => `${first.charAt(0)}${last.charAt(0)}`);
-
+  const pending = useSelector(state => state.deliveries.pending);
+  const delivered = useSelector(state => state.deliveries.delivered);
   const dispatch = useDispatch();
+
+  const [active, setActive] = useState(true);
+  const [listData, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function loadAPI() {
+      try {
+        const pendingRequest = await api.get(`provider/${user.id}/deliveries`);
+        const delveredRequest = await api.get(`provider/${user.id}/delivered`);
+
+        dispatch(getDeliveries(pendingRequest.data, delveredRequest.data));
+      } catch (err) {
+        Alert.alert(
+          'Fastfeet',
+          'Error loading deliveries, please check your connection!'
+        );
+      }
+    }
+
+    loadAPI();
+    setList(pending);
+  }, []);
+
+  useEffect(() => {
+    if (active) {
+      setList(pending);
+    } else {
+      setList(delivered);
+    }
+  }, [pending, delivered, active]);
+
+  const [first, last] = user.name.split(' ');
+  const nullImageString = useMemo(() => `${first.charAt(0)}${last.charAt(0)}`);
 
   const handleLogOut = () => {
     dispatch(userSignOut());
@@ -46,6 +81,30 @@ export default function Deliveries({ navigation }) {
 
   const handleDeliveries = () => {
     setActive(!active);
+  };
+
+  async function loadAPI() {
+    try {
+      const pendingRequest = await api.get(`provider/${user.id}/deliveries`);
+      const delveredRequest = await api.get(`provider/${user.id}/delivered`);
+
+      dispatch(getDeliveries(pendingRequest.data, delveredRequest.data));
+    } catch (err) {
+      Alert.alert(
+        'Fastfeet',
+        'Error loading deliveries, please check your connection!'
+      );
+    }
+  }
+  const handleRefresh = () => {
+    setLoading(true);
+    loadAPI();
+
+    setLoading(false);
+  };
+
+  const handleOpen = item => {
+    navigation.navigate('Information', { item });
   };
 
   return (
@@ -89,6 +148,20 @@ export default function Deliveries({ navigation }) {
           </Buttons>
         </ButtonHolder>
       </Menu>
+      <List
+        data={listData}
+        keyExtractor={ìtem => ìtem.id}
+        showsVerticalScrollIndicator={false}
+        onRefresh={handleRefresh}
+        refreshing={loading}
+        renderItem={({ item }) => (
+          <ListView item={item} onPress={() => handleOpen(item)} />
+        )}
+      />
     </Container>
   );
 }
+
+Deliveries.propTypes = {
+  navigation: PropTypes.func.isRequired,
+};

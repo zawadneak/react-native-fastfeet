@@ -5,9 +5,8 @@ export function userSignIn(user) {
   };
 }
 
-export function userSignOut(user) {
+export function userSignOut() {
   return {
     type: '@user/SIGN_OUT',
-    payload: { user },
   };
 }

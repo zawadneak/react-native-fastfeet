@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { StatusBar, Alert } from 'react-native';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useIsFocused } from '@react-navigation/native';
 import { userSignOut } from '~/store/modules/user/actions';
 import getDeliveries from '~/store/modules/deliveries/actions';
 import ListView from '~/components/ListView/index';
@@ -28,13 +29,7 @@ import {
 import api from '~/services/api';
 
 export default function Deliveries({ navigation }) {
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      tabBarIcon: ({ color, size }) => (
-        <Icon name="reorder" size={size} color={color} />
-      ),
-    });
-  }, [navigation]);
+  const isFocused = useIsFocused();
 
   const user = useSelector(state => state.user.data);
   const pending = useSelector(state => state.deliveries.pending);
@@ -59,10 +54,11 @@ export default function Deliveries({ navigation }) {
         );
       }
     }
-
-    loadAPI();
+    if (isFocused) {
+      loadAPI();
+    }
     setList(pending);
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     if (active) {
@@ -112,11 +108,10 @@ export default function Deliveries({ navigation }) {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <Header>
         <Information>
-          {user.avata ? (
+          {user.avatar ? (
             <Logo
               source={{
-                uri:
-                  'http://localhost:3333/files/82461012180574ec9996e28d3c2dc2af',
+                uri: user.avatar.url,
               }}
             />
           ) : (

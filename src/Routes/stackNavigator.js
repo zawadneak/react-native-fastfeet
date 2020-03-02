@@ -5,6 +5,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Deliveries from '~/pages/Deliveries/index';
 import Information from '~/pages/DeliveryStack/Information/index';
 import CreateProblem from '~/pages/DeliveryStack/CreateProblem/index';
+import ListProblems from '~/pages/DeliveryStack/ListProblems/index';
+import ConfirmDelivery from '~/pages/DeliveryStack/ConfirmDelivery/index';
 
 const Stacks = createStackNavigator();
 
@@ -46,6 +48,22 @@ export default function StackNavigator() {
         component={CreateProblem}
         options={{
           headerTitle: 'Inform problem',
+          headerLayoutPreset: 'center',
+        }}
+      />
+      <Stacks.Screen
+        name="List"
+        component={ListProblems}
+        options={{
+          headerTitle: 'Problems list',
+          headerLayoutPreset: 'center',
+        }}
+      />
+      <Stacks.Screen
+        name="Confirm"
+        component={ConfirmDelivery}
+        options={{
+          headerTitle: 'Confirm delivery',
           headerLayoutPreset: 'center',
         }}
       />

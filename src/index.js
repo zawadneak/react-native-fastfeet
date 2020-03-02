@@ -7,6 +7,8 @@ import Routes from './Routes/routes';
 
 import { store, persistor } from './store/index';
 
+console.disableYellowBox = true;
+
 export default function App() {
   return (
     <Provider store={store}>
